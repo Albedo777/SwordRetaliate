@@ -6,10 +6,11 @@
 //#include "Components/TextRenderComponent.h"
 #include "Components/CapsuleComponent.h"
 //#include "Components/InputComponent.h"
-//#include "GameFramework/SpringArmComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
-//#include "Camera/CameraComponent.h"
+#include "Camera/CameraComponent.h"
+
 
 ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 {
@@ -20,26 +21,26 @@ ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 	GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f);
 	GetCapsuleComponent()->SetCapsuleRadius(40.0f);
 
-	//// Create a camera boom attached to the root (capsule)
-	//CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	//CameraBoom->SetupAttachment(RootComponent);
-	//CameraBoom->TargetArmLength = 500.0f;
-	//CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 75.0f);
-	//CameraBoom->SetUsingAbsoluteRotation(true);
-	//CameraBoom->bDoCollisionTest = false;
-	//CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+	// Create a camera boom attached to the root (capsule)
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->TargetArmLength = 500.0f;
+	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 75.0f);
+	CameraBoom->SetUsingAbsoluteRotation(true);
+	CameraBoom->bDoCollisionTest = false;
+	CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
 
-	//// Create an orthographic camera (no perspective) and attach it to the boom
-	//SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
-	//SideViewCameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
-	//SideViewCameraComponent->OrthoWidth = 2048.0f;
-	//SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	// Create an orthographic camera (no perspective) and attach it to the boom
+	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
+	SideViewCameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
+	SideViewCameraComponent->OrthoWidth = 2048.0f;
+	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
-	//CameraBoom->SetUsingAbsoluteRotation(true);
-	//SideViewCameraComponent->bUsePawnControlRotation = false;
-	//SideViewCameraComponent->bAutoActivate = true;
+	CameraBoom->SetUsingAbsoluteRotation(true);
+	SideViewCameraComponent->bUsePawnControlRotation = false;
+	SideViewCameraComponent->bAutoActivate = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	// Configure character movement

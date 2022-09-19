@@ -11,11 +11,18 @@
  * 
  */
 
-UENUM(BlueprintType)
-enum EAICharacterStatus
+UENUM(BlueprintType, meta = (Bitflags)
+enum class EAICharacterStatus : uint16
 {				
-	Run					UMETA(DisplayName = "ÅÜ"),
+	Run	= 0				UMETA(DisplayName = "ÅÜ"),
+	SlowRun				UMETA(DisplayName = "ÂýÅÜ"),
+	FastRun				UMETA(DisplayName = "Ë²ÒÆ"),
+	StopRun				UMETA(DisplayName = "Ñ£ÔÎ"),
+	BeHit				UMETA(DisplayName = "ÊÜ»÷"),
+	Jump				UMETA(DisplayName = "ÌøÔ¾"),
+	Dead				UMETA(DisplayName = "ËÀÍö"),
 	Skill				UMETA(DisplayName = "ÊÍ·Å¼¼ÄÜ"),
+	Hit					UMETA(DisplayName = "×²"),
 };
 
 UCLASS()
@@ -23,13 +30,13 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 
-	///** Side view camera */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	//	class UCameraComponent* SideViewCameraComponent;
+	/** Side view camera */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class UCameraComponent* SideViewCameraComponent;
 
-	///** Camera boom positioning the camera beside the character */
-	//UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	//	class USpringArmComponent* CameraBoom;
+	/** Camera boom positioning the camera beside the character */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+		class USpringArmComponent* CameraBoom;
 
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
@@ -49,6 +56,8 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 
 
 private: 
+
+	UP
 	TEnumAsByte<EAICharacterStatus> AIStatus;
 
 protected:
@@ -76,9 +85,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus);
 
-	///** Returns SideViewCameraComponent subobject **/
-	//FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
-	///** Returns CameraBoom subobject **/
-	//FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+	/** Returns SideViewCameraComponent subobject **/
+	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
+	/** Returns CameraBoom subobject **/
+	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	
 };
