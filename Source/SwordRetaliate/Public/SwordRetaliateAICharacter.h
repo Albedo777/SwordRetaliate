@@ -11,6 +11,12 @@
  * 
  */
 
+UENUM(BlueprintType)
+enum EAICharacterStatus
+{				
+	Run					UMETA(DisplayName = "≈‹"),
+	Skill				UMETA(DisplayName = " Õ∑≈ººƒ‹"),
+};
 
 UCLASS()
 class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
@@ -42,6 +48,9 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 	//	class UPaperFlipbook* VertigoAnimation;
 
 
+private: 
+	TEnumAsByte<EAICharacterStatus> AIStatus;
+
 protected:
 //
 	virtual void Tick(float DeltaSeconds) override;
@@ -56,10 +65,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* SkillAnimation;
-//
-//public: 
-//
+
+public:
+
 	ASwordRetaliateAICharacter();
+	
+	UFUNCTION(BlueprintCallable)
+	const TEnumAsByte<EAICharacterStatus> GetAIStatus();
+
+	UFUNCTION(BlueprintCallable)
+	bool SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus);
 
 	///** Returns SideViewCameraComponent subobject **/
 	//FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }

@@ -68,6 +68,20 @@ ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 	// Enable replication on the Sprite component so animations show up when networked
 	GetSprite()->SetIsReplicated(false);
 	bReplicates = false;
+
+	// TODO: Here
+
+	AIStatus = EAICharacterStatus::Run;
+}
+
+bool ASwordRetaliateAICharacter::SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus)
+{
+	return false;
+}
+
+const TEnumAsByte<EAICharacterStatus> ASwordRetaliateAICharacter::GetAIStatus()
+{
+	return AIStatus;
 }
 
 void ASwordRetaliateAICharacter::UpdateAnimation()
@@ -80,10 +94,17 @@ void ASwordRetaliateAICharacter::UpdateAnimation()
 
 }
 
+void ASwordRetaliateAICharacter::MoveRight(float Value)
+{
+	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+}
+
 void ASwordRetaliateAICharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
 	UpdateAnimation();
+
+	MoveRight(1.0);
 }
 
