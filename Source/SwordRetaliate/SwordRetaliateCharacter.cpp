@@ -1,19 +1,12 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #include "SwordRetaliateCharacter.h"
 #include "PaperFlipbookComponent.h"
-#include "Components/TextRenderComponent.h"
+#include "SkillComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
-
-DEFINE_LOG_CATEGORY_STATIC(SideScrollerCharacter, Log, All);
-
-//////////////////////////////////////////////////////////////////////////
-// ASwordRetaliateCharacter
 
 ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 {
@@ -34,12 +27,11 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	CameraBoom->SetUsingAbsoluteRotation(true);
 	CameraBoom->bDoCollisionTest = false;
 	CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-	
 
 	// Create an orthographic camera (no perspective) and attach it to the boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
-	SideViewCameraComponent->OrthoWidth = 2048.0f;
+	SideViewCameraComponent->OrthoWidth = 1024;
 	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
@@ -55,6 +47,7 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	GetCharacterMovement()->GroundFriction = 3.0f;
 	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
 	GetCharacterMovement()->MaxFlySpeed = 600.0f;
+	JumpMaxCount = 2;
 
 	// Lock character motion onto the XZ plane, so the character can't move in or out of the screen
 	GetCharacterMovement()->bConstrainToPlane = true;
@@ -65,19 +58,14 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	// behavior on the edge of a ledge versus inclines by setting this to true or false
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
-    // 	TextComponent = CreateDefaultSubobject<UTextRenderComponent>(TEXT("IncarGear"));
-    // 	TextComponent->SetRelativeScale3D(FVector(3.0f, 3.0f, 3.0f));
-    // 	TextComponent->SetRelativeLocation(FVector(35.0f, 5.0f, 20.0f));
-    // 	TextComponent->SetRelativeRotation(FRotator(0.0f, 90.0f, 0.0f));
-    // 	TextComponent->SetupAttachment(RootComponent);
-
 	// Enable replication on the Sprite component so animations show up when networked
 	GetSprite()->SetIsReplicated(true);
 	bReplicates = true;
+
+	// Skill system
+	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Animation
 
 void ASwordRetaliateCharacter::UpdateAnimation()
 {
@@ -86,7 +74,7 @@ void ASwordRetaliateCharacter::UpdateAnimation()
 
 	// Are we moving or standing still?
 	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
-	if( GetSprite()->GetFlipbook() != DesiredAnimation 	)
+	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
@@ -95,13 +83,9 @@ void ASwordRetaliateCharacter::UpdateAnimation()
 void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	UpdateCharacter();	
+
+	UpdateCharacter();
 }
-
-
-//////////////////////////////////////////////////////////////////////////
-// Input
 
 void ASwordRetaliateCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -140,7 +124,7 @@ void ASwordRetaliateCharacter::UpdateCharacter()
 	UpdateAnimation();
 
 	// Now setup the rotation of the controller based on the direction we are travelling
-	const FVector PlayerVelocity = GetVelocity();	
+	const FVector PlayerVelocity = GetVelocity();
 	float TravelDirection = PlayerVelocity.X;
 	// Set the rotation so that the character faces his direction of travel.
 	if (Controller != nullptr)
