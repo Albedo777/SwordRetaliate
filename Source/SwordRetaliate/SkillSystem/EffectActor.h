@@ -13,7 +13,7 @@ public:
 	AEffectActor();
 
 	virtual void Tick(float DeltaTime) override;
-
+	
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnActiveEffect(ACharacter* Character);
 

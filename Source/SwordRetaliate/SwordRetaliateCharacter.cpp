@@ -1,12 +1,12 @@
 #include "SwordRetaliateCharacter.h"
 #include "PaperFlipbookComponent.h"
-#include "SkillComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "SkillSystem/SkillComponent.h"
 
 ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 {
@@ -71,12 +71,18 @@ void ASwordRetaliateCharacter::UpdateAnimation()
 {
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	PlayFlipAnimation((PlayerSpeedSqr > 0.0f) ? EFlipAnimationType::Run : EFlipAnimationType::Idle);
+}
 
-	// Are we moving or standing still?
-	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
-	if (GetSprite()->GetFlipbook() != DesiredAnimation)
+void ASwordRetaliateCharacter::PlayFlipAnimation(EFlipAnimationType AnimationType)
+{
+	if (FlipAnimationMap.Contains(AnimationType))
 	{
-		GetSprite()->SetFlipbook(DesiredAnimation);
+		UPaperFlipbook* DesiredAnimation = FlipAnimationMap[AnimationType];
+		if (GetSprite()->GetFlipbook() != DesiredAnimation)
+		{
+			GetSprite()->SetFlipbook(DesiredAnimation);
+		}
 	}
 }
 

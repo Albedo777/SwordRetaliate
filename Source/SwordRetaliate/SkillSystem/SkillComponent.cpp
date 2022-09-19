@@ -1,6 +1,6 @@
 ﻿#include "SkillComponent.h"
 
-#include "SwordRetaliateCharacter.h"
+#include "SwordRetaliate/SwordRetaliateCharacter.h"
 
 
 USkillComponent::USkillComponent()

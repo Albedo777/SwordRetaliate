@@ -4,6 +4,16 @@
 #include "PaperCharacter.h"
 #include "SwordRetaliateCharacter.generated.h"
 
+UENUM(BlueprintType)
+enum class EFlipAnimationType : uint8
+{
+	Idle = 0,
+	Run,
+	Jump,
+	Attack,
+	Dash,
+};
+
 class UPaperFlipbook;
 class UTextRenderComponent;
 
@@ -12,6 +22,9 @@ class ASwordRetaliateCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 
+public:
+	ASwordRetaliateCharacter();
+	
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* SideViewCameraComponent;
@@ -20,20 +33,21 @@ class ASwordRetaliateCharacter : public APaperCharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	class USkillComponent* SkillComponent;
+	
 	virtual void Tick(float DeltaSeconds) override;
 
+	UFUNCTION(BlueprintCallable)
+	void PlayFlipAnimation(EFlipAnimationType AnimationType);
+	
 protected:
-	// The animation to play while running around
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Animations)
-	UPaperFlipbook* RunningAnimation;
-
-	// The animation to play while idle (standing still)
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	UPaperFlipbook* IdleAnimation;
-
+	TMap<EFlipAnimationType, UPaperFlipbook*> FlipAnimationMap;
+	
 	/** Called to choose the correct animation to play based on the character's movement state */
 	void UpdateAnimation();
-
+	
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
@@ -48,15 +62,4 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
-
-public:
-	ASwordRetaliateCharacter();
-
-	/** Returns SideViewCameraComponent subobject **/
-	FORCEINLINE UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	class USkillComponent* SkillComponent;
 };

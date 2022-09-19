@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "EffectActor.h"
+#include "SwordRetaliate/SwordRetaliateCharacter.h"
 #include "UObject/Object.h"
 #include "SkillBase.generated.h"
 
@@ -13,14 +15,14 @@ class SWORDRETALIATE_API USkillBase : public UObject
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AEffectActor> EffectClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 SkillId;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 SkillNum = 0;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float SkillDuration = 0.f;
-
+	EFlipAnimationType AnimationType;
+	
 	virtual void OnInitialize();
 	
 	virtual void OnActiveSkill(ASwordRetaliateCharacter* Character);
@@ -36,7 +38,4 @@ public:
 	void BP_OnDeActiveSkill(ASwordRetaliateCharacter* Character);
 	
 	FTimerHandle TimerHandleSkill;
-
-protected:
-	bool bIsCasting = false;
 };
