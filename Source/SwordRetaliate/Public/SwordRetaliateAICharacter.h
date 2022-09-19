@@ -11,8 +11,8 @@
  * 
  */
 
-UENUM(BlueprintType, meta = (Bitflags)
-enum class EAICharacterStatus : uint16
+UENUM(BlueprintType, meta = (Bitflags))
+enum class EAICharacterStatus : uint8
 {				
 	Run	= 0				UMETA(DisplayName = "ÅÜ"),
 	SlowRun				UMETA(DisplayName = "ÂýÅÜ"),
@@ -57,7 +57,6 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 
 private: 
 
-	UP
 	TEnumAsByte<EAICharacterStatus> AIStatus;
 
 protected:
