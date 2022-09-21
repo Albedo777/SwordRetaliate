@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,18 +11,20 @@
  * 
  */
 
+#define TOFLAG(Enum) (1 << static_cast<uint8>(Enum))
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EAICharacterStatus : uint8
-{				
-	Run	= 0				UMETA(DisplayName = "≈‹"),
-	SlowRun				UMETA(DisplayName = "¬˝≈‹"),
-	FastRun				UMETA(DisplayName = "À≤“∆"),
-	StopRun				UMETA(DisplayName = "—£‘Œ"),
-	BeHit				UMETA(DisplayName = " ‹ª˜"),
-	Jump				UMETA(DisplayName = "Ã¯‘æ"),
-	Dead				UMETA(DisplayName = "À¿Õˆ"),
-	Skill				UMETA(DisplayName = " Õ∑≈ººƒ‹"),
-	Hit					UMETA(DisplayName = "◊≤"),
+{
+	Run = 0				UMETA(DisplayName = "Ë∑ë"),
+	SlowRun				UMETA(DisplayName = "ÊÖ¢Ë∑ë"),
+	FastRun				UMETA(DisplayName = "Áû¨Áßª"),
+	StopRun				UMETA(DisplayName = "Áú©Êôï"),
+	BeHit				UMETA(DisplayName = "ÂèóÂáª"),
+	Jump				UMETA(DisplayName = "Ë∑≥Ë∑É"),
+	Dead				UMETA(DisplayName = "Ê≠ª‰∫°"),
+	Skill				UMETA(DisplayName = "ÈáäÊîæÊäÄËÉΩ"),
+	Hit					UMETA(DisplayName = "Êíû"),
 };
 
 UCLASS()
@@ -55,9 +57,10 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 	//	class UPaperFlipbook* VertigoAnimation;
 
 
-private: 
+protected:
 
-	TEnumAsByte<EAICharacterStatus> AIStatus;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "EAICharacterStatus"))
+		int32 AIStatus;
 
 protected:
 //
@@ -65,7 +68,7 @@ protected:
 //
 	void UpdateAnimation();
 //
-	void MoveRight(float Value);
+	void MoveRight();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
@@ -74,18 +77,27 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* SkillAnimation;
 
+
+
 public:
 
 	ASwordRetaliateAICharacter();
 	
 	UFUNCTION(BlueprintCallable)
-	const TEnumAsByte<EAICharacterStatus> GetAIStatus();
+		bool AIStatusHasTag(EAICharacterStatus AITag);
 
 	UFUNCTION(BlueprintCallable)
-	bool SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus);
+		bool AIStatusAddTag(EAICharacterStatus AITag);
+
+	UFUNCTION(BlueprintCallable)
+		bool AIStatusRemoveTag(EAICharacterStatus AITag);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skill)
+		class USkillComponent* SkillComponent;
 
 	/** Returns SideViewCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	
