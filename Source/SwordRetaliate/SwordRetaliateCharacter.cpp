@@ -86,6 +86,46 @@ void ASwordRetaliateCharacter::PlayFlipAnimation(EFlipAnimationType AnimationTyp
 	}
 }
 
+EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
+{
+	const UPaperFlipbook* CurrentAnimation = GetSprite()->GetFlipbook();
+	TArray<EFlipAnimationType> OutKeys;
+	FlipAnimationMap.GetKeys(OutKeys);
+
+	for (const EFlipAnimationType Type : OutKeys)
+	{
+		if (FlipAnimationMap[Type] == CurrentAnimation)
+		{
+			return Type;
+		}
+	}
+	return EFlipAnimationType::Idle;
+}
+
+bool ASwordRetaliateCharacter::IsCharacterAttackAction() const
+{
+	return GetCharacterCurrentAction() == EFlipAnimationType::Attack;
+}
+
+void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
+{
+	PlayFlipAnimation(EFlipAnimationType::Hit);
+	Health -= Damage;
+	if (Health <= 0.f)
+	{
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this]()
+		{
+			OnCharacterDie();
+		}), 0.5f, false);
+	}
+}
+
+void ASwordRetaliateCharacter::OnCharacterDie()
+{
+	
+}
+
 void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);

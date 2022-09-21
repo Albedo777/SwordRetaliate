@@ -12,13 +12,15 @@ enum class EFlipAnimationType : uint8
 	Jump,
 	Attack,
 	Dash,
+	Hit,
+	Die,
 };
 
 class UPaperFlipbook;
 class UTextRenderComponent;
 
 UCLASS(Config = Game, Blueprintable)
-class ASwordRetaliateCharacter : public APaperCharacter
+class  ASwordRetaliateCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 
@@ -40,6 +42,24 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void PlayFlipAnimation(EFlipAnimationType AnimationType);
+
+	UFUNCTION(BlueprintCallable)
+	EFlipAnimationType GetCharacterCurrentAction() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterAttackAction() const;
+
+	UFUNCTION(BlueprintCallable)
+	void OnCharacterHit(float Damage);
+
+	UFUNCTION(BlueprintCallable)
+	void OnCharacterDie();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Speed = 100.f;
 	
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
