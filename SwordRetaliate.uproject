@@ -18,5 +18,11 @@
 			"Name": "Paper2D",
 			"Enabled": true
 		}
+	],
+	"TargetPlatforms": [
+		"AllDesktop",
+		"Android",
+		"HoloLens",
+		"WindowsNoEditor"
 	]
 }
