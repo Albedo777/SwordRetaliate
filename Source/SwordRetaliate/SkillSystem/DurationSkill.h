@@ -26,4 +26,6 @@ public:
 private:
 	UPROPERTY(Transient)
 	AEffectActor* EffectActor;
+
+	FTimerHandle TimerHandleDurationSkill;
 };

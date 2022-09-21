@@ -30,12 +30,12 @@ void USkillComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActor
 	
 }
 
-void USkillComponent::CastSkill(int32 InSkillId)
+bool USkillComponent::CastSkill(int32 InSkillId)
 {
 	ASwordRetaliateCharacter* Character = Cast<ASwordRetaliateCharacter>(GetOwner());
 	if (Character == nullptr)
 	{
-		return;
+		return false;
 	}
 
 	USkillBase* CastSkill = nullptr;
@@ -51,6 +51,9 @@ void USkillComponent::CastSkill(int32 InSkillId)
 	if (CastSkill && CastSkill->CanCastSkill())
 	{
 		CastSkill->OnActiveSkill(Character);
+		return true;
 	}
+
+	return false;
 }
 

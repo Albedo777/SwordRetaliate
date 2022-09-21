@@ -22,6 +22,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EFlipAnimationType AnimationType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillCoolDownTime;
 	
 	virtual void OnInitialize();
 	
@@ -36,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDeActiveSkill(ASwordRetaliateCharacter* Character);
+
+private:
+	bool bIsInCoolDown = false;
 	
 	FTimerHandle TimerHandleSkill;
 };
