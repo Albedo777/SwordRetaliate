@@ -21,17 +21,23 @@ void USkillIcon::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	if (bIsInCoolDown)
 	{
 		AccumulatedTime += InDeltaTime;
-		const float Step = AccumulatedTime / BindSkill->SkillCoolDownTime;
+		
 		if (Material && BindSkill)
 		{
+			const float Step = AccumulatedTime / BindSkill->SkillCoolDownTime;
 			Material->SetScalarParameterValue(TEXT("Step"), Step);
+			if (Step >= 1.f)
+			{
+				bIsInCoolDown = false;
+				AccumulatedTime = 0.f;
+				SkillButton->SetVisibility(ESlateVisibility::Visible);
+			}
 		}
-		if (Step >= 1.f)
-		{
-			bIsInCoolDown = false;
-			AccumulatedTime = 0.f;
-			SkillButton->SetVisibility(ESlateVisibility::Visible);
-		}
+	}
+
+	if (BindSkill == nullptr)
+	{
+		BindSkill = USwordRetaliateUtils::GetSkillConfig(this, SkillId);
 	}
 }
 
