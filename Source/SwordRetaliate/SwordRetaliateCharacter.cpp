@@ -112,6 +112,12 @@ void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
 {
 	PlayFlipAnimation(EFlipAnimationType::Hit);
 	Health -= Damage;
+
+	if (OnCharacterTakeDamage.IsBound())
+	{
+		OnCharacterTakeDamage.Broadcast();
+	}
+	
 	if (Health <= 0.f)
 	{
 		FTimerHandle TimerHandle;
