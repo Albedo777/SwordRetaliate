@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "EffectActor.h"
 #include "SwordRetaliate/SwordRetaliateCharacter.h"
+#include "SwordRetaliate/PaperAnimationComponent.h"
 #include "UObject/Object.h"
 #include "SkillBase.generated.h"
 

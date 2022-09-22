@@ -1,4 +1,6 @@
 #include "SwordRetaliateCharacter.h"
+
+#include "PaperAnimationComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -6,6 +8,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "TimerManager.h"
 #include "SkillSystem/SkillComponent.h"
 
 ASwordRetaliateCharacter::ASwordRetaliateCharacter()
@@ -45,7 +48,7 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	GetCharacterMovement()->AirControl = 0.80f;
 	GetCharacterMovement()->JumpZVelocity = 1000.f;
 	GetCharacterMovement()->GroundFriction = 3.0f;
-	GetCharacterMovement()->MaxWalkSpeed = 600.0f;
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	GetCharacterMovement()->MaxFlySpeed = 600.0f;
 	JumpMaxCount = 2;
 
@@ -64,42 +67,32 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 
 	// Skill system
 	SkillComponent = CreateDefaultSubobject<USkillComponent>(TEXT("SkillComponent"));
-}
 
-
-void ASwordRetaliateCharacter::UpdateAnimation()
-{
-	const FVector PlayerVelocity = GetVelocity();
-	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	PlayFlipAnimation((PlayerSpeedSqr > 0.0f) ? EFlipAnimationType::Run : EFlipAnimationType::Idle);
+	// Animation system
+	AnimationComponent = CreateDefaultSubobject<UPaperAnimationComponent>(TEXT("AnimationComponent"));
 }
 
 void ASwordRetaliateCharacter::PlayFlipAnimation(EFlipAnimationType AnimationType)
 {
-	if (FlipAnimationMap.Contains(AnimationType))
+	AnimationComponent->PlayFlipAnimation(AnimationType);
+}
+
+void ASwordRetaliateCharacter::SetIsRunning(bool bIsRunning)
+{
+	AnimationComponent->SetIsRunning(bIsRunning);
+	if (bIsRunning)
 	{
-		UPaperFlipbook* DesiredAnimation = FlipAnimationMap[AnimationType];
-		if (GetSprite()->GetFlipbook() != DesiredAnimation)
-		{
-			GetSprite()->SetFlipbook(DesiredAnimation);
-		}
+		GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	}
+	else
+	{
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}
 }
 
 EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 {
-	const UPaperFlipbook* CurrentAnimation = GetSprite()->GetFlipbook();
-	TArray<EFlipAnimationType> OutKeys;
-	FlipAnimationMap.GetKeys(OutKeys);
-
-	for (const EFlipAnimationType Type : OutKeys)
-	{
-		if (FlipAnimationMap[Type] == CurrentAnimation)
-		{
-			return Type;
-		}
-	}
-	return EFlipAnimationType::Idle;
+	return AnimationComponent->GetCharacterCurrentAction();
 }
 
 bool ASwordRetaliateCharacter::IsCharacterAttackAction() const
@@ -166,9 +159,6 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 
 void ASwordRetaliateCharacter::UpdateCharacter()
 {
-	// Update animation to match the motion
-	UpdateAnimation();
-
 	// Now setup the rotation of the controller based on the direction we are travelling
 	const FVector PlayerVelocity = GetVelocity();
 	float TravelDirection = PlayerVelocity.X;

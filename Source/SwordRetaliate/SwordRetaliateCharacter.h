@@ -1,20 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PaperAnimationComponent.h"
 #include "PaperCharacter.h"
 #include "SwordRetaliateCharacter.generated.h"
-
-UENUM(BlueprintType)
-enum class EFlipAnimationType : uint8
-{
-	Idle = 0,
-	Run,
-	Jump,
-	Attack,
-	Dash,
-	Hit,
-	Die,
-};
 
 class UPaperFlipbook;
 class UTextRenderComponent;
@@ -37,12 +26,18 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USkillComponent* SkillComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPaperAnimationComponent* AnimationComponent;
 	
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintCallable)
 	void PlayFlipAnimation(EFlipAnimationType AnimationType);
 
+	UFUNCTION(BlueprintCallable)
+	void SetIsRunning(bool bIsRunning);
+	
 	UFUNCTION(BlueprintCallable)
 	EFlipAnimationType GetCharacterCurrentAction() const;
 	
@@ -59,15 +54,12 @@ public:
 	float Health = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Speed = 100.f;
+	float WalkSpeed = 500.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RunSpeed = 1200.f;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	TMap<EFlipAnimationType, UPaperFlipbook*> FlipAnimationMap;
-	
-	/** Called to choose the correct animation to play based on the character's movement state */
-	void UpdateAnimation();
-	
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
