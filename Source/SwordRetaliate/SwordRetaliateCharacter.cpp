@@ -90,6 +90,14 @@ void ASwordRetaliateCharacter::SetIsRunning(bool bIsRunning)
 	}
 }
 
+void ASwordRetaliateCharacter::Attack()
+{
+	if (!IsCharacterAttackAction())
+	{
+		PlayFlipAnimation(EFlipAnimationType::Attack);
+	}
+}
+
 EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 {
 	return AnimationComponent->GetCharacterCurrentAction();

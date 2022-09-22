@@ -37,6 +37,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetIsRunning(bool bIsRunning);
+
+	UFUNCTION(BlueprintCallable)
+	void Attack();
 	
 	UFUNCTION(BlueprintCallable)
 	EFlipAnimationType GetCharacterCurrentAction() const;

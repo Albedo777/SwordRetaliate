@@ -33,10 +33,18 @@ void UPaperAnimationComponent::HandleAnimation()
 	const UCharacterMovementComponent* MovementComponent = PaperCharacter->GetCharacterMovement();
 	if (MovementComponent->IsWalking())
 	{
-		PaperCharacter->GetSprite()->SetLooping(true);
-		const FVector PlayerVelocity = PaperCharacter->GetVelocity();
-		const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-		PlayFlipAnimation(PlayerSpeedSqr > 0.0f ? (bIsRunning ? EFlipAnimationType::Run : EFlipAnimationType::Walk) : EFlipAnimationType::Idle);
+		if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+		{
+			PaperCharacter->GetSprite()->SetLooping(false);
+		}
+		else
+		{
+			PaperCharacter->GetSprite()->SetLooping(true);
+			const FVector PlayerVelocity = PaperCharacter->GetVelocity();
+			const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+			PlayFlipAnimation(PlayerSpeedSqr > 0.0f ? (bIsRunning ? EFlipAnimationType::Run : EFlipAnimationType::Walk) : EFlipAnimationType::Idle);
+			PaperCharacter->GetSprite()->SetLooping(true);
+		}
 	}
 	else if (MovementComponent->IsFalling())
 	{
@@ -61,7 +69,6 @@ void UPaperAnimationComponent::PlayFlipAnimation(EFlipAnimationType AnimationTyp
 		{
 			PaperCharacter->GetSprite()->SetFlipbook(DesiredAnimation);
 			PaperCharacter->GetSprite()->PlayFromStart();
-			PaperCharacter->GetCharacterMovement()->bNotifyApex = true;
 		}
 	}
 }
@@ -92,6 +99,10 @@ void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 	if (GetCharacterCurrentAction() == EFlipAnimationType::AirTrans)
 	{
 		PlayFlipAnimation(EFlipAnimationType::Fall);
+	}
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+	{
+		PlayFlipAnimation(EFlipAnimationType::Idle);
 	}
 }
 
