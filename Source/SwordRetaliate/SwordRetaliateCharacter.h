@@ -3,7 +3,11 @@
 #include "CoreMinimal.h"
 #include "PaperAnimationComponent.h"
 #include "PaperCharacter.h"
+#include "Components/WidgetComponent.h"
 #include "SwordRetaliateCharacter.generated.h"
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterTakeDamage);
 
 class UPaperFlipbook;
 class UTextRenderComponent;
@@ -57,10 +61,15 @@ public:
 	float Health = 100.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth = 100.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float WalkSpeed = 500.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RunSpeed = 1200.f;
+
+	FCharacterTakeDamage OnCharacterTakeDamage;
 	
 protected:
 	/** Called for side to side input */
