@@ -11,15 +11,13 @@
  * 
  */
 
-#define TOFLAG(Enum) (1 << static_cast<uint8>(Enum))
+#define TOFLAG(Enum) (1 << (static_cast<uint8>(Enum) - 1))
 
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EAICharacterStatus : uint8
 {
 	None = 0			UMETA(DisplayName = "空"),
 	Run					UMETA(DisplayName = "跑"),
-	SlowRun				UMETA(DisplayName = "慢跑"),
-	FastRun				UMETA(DisplayName = "瞬移"),
 	StopRun				UMETA(DisplayName = "眩晕"),
 	BeHit				UMETA(DisplayName = "受击"),
 	Jump				UMETA(DisplayName = "跳跃"),
