@@ -11,6 +11,7 @@ void USkillBase::OnActiveSkill(ASwordRetaliateCharacter* Character)
 	BP_OnActiveSkill(Character);
 
 	bIsInCoolDown = true;
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandleSkill);
 	GetWorld()->GetTimerManager().SetTimer(TimerHandleSkill, FTimerDelegate::CreateLambda([this]
 	{
 		bIsInCoolDown = false;

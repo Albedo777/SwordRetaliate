@@ -57,8 +57,4 @@ void USkillIcon::OnCastSkill()
 		bIsInCoolDown = true;
 		SkillButton->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 	}
-	else
-	{
-		bIsInCoolDown = false;
-	}
 }
