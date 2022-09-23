@@ -113,7 +113,7 @@ bool ASwordRetaliateAICharacter::AIStatusRemoveTag(EAICharacterStatus AITag)
 	{
 		return true;
 	}
-	AIStatus = AIStatus & (!TOFLAG(AITag));
+	AIStatus = AIStatus & (~TOFLAG(AITag));
 	return true;
 }
 
@@ -129,26 +129,26 @@ void ASwordRetaliateAICharacter::UpdateAnimation()
 
 void ASwordRetaliateAICharacter::MoveRight()
 {
-	if (AIStatusHasTag(EAICharacterStatus::Hit))
-	{
-		return;
-	}
-	float Value = 1.0f;
-	if (AIStatusHasTag(EAICharacterStatus::Dead) || AIStatusHasTag(EAICharacterStatus::StopRun))
-	{
-		Value = 0.0f;
-		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-	}
-	else if (AIStatusHasTag(EAICharacterStatus::SlowRun))
-	{
-		Value = 0.4;
-		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-	}
-	else if (AIStatusHasTag(EAICharacterStatus::Run))
-	{
-		Value = 0.7;
-		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-	}
+	//if (AIStatusHasTag(EAICharacterStatus::Hit))
+	//{
+	//	return;
+	//}
+	//float Value = 1.0f;
+	//if (AIStatusHasTag(EAICharacterStatus::Dead) || AIStatusHasTag(EAICharacterStatus::StopRun))
+	//{
+	//	Value = 0.0f;
+	//	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	//}
+	//else if (AIStatusHasTag(EAICharacterStatus::SlowRun))
+	//{
+	//	Value = 0.4;
+	//	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	//}
+	//else if (AIStatusHasTag(EAICharacterStatus::Run))
+	//{
+	//	Value = 0.7;
+	//	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	//}
 	
 }
 
