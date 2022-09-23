@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -11,24 +11,31 @@
  * 
  */
 
+#define TOFLAG(Enum) (1 << static_cast<uint8>(Enum))
+
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EAICharacterStatus : uint8
-{				
-	Run	= 0				UMETA(DisplayName = "≈‹"),
-	SlowRun				UMETA(DisplayName = "¬˝≈‹"),
-	FastRun				UMETA(DisplayName = "À≤“∆"),
-	StopRun				UMETA(DisplayName = "—£‘Œ"),
-	BeHit				UMETA(DisplayName = " ‹ª˜"),
-	Jump				UMETA(DisplayName = "Ã¯‘æ"),
-	Dead				UMETA(DisplayName = "À¿Õˆ"),
-	Skill				UMETA(DisplayName = " Õ∑≈ººƒ‹"),
-	Hit					UMETA(DisplayName = "◊≤"),
+{
+	None = 0			UMETA(DisplayName = "Á©∫"),
+	Run					UMETA(DisplayName = "Ë∑ë"),
+	SlowRun				UMETA(DisplayName = "ÊÖ¢Ë∑ë"),
+	FastRun				UMETA(DisplayName = "Áû¨Áßª"),
+	StopRun				UMETA(DisplayName = "Áú©Êôï"),
+	BeHit				UMETA(DisplayName = "ÂèóÂáª"),
+	Jump				UMETA(DisplayName = "Ë∑≥Ë∑É"),
+	Dead				UMETA(DisplayName = "Ê≠ª‰∫°"),
+	Skill				UMETA(DisplayName = "ÈáäÊîæÊäÄËÉΩ"),
+	Hit					UMETA(DisplayName = "Êíû"),
+	Plunge				UMETA(DisplayName = "ÁåõÊâë"),
 };
+
 
 UCLASS()
 class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 {
 	GENERATED_BODY()
+
+protected:
 
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -39,34 +46,16 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 		class USpringArmComponent* CameraBoom;
 
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* FastRunAnimation;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* SlowRunAnimation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "EAICharacterStatus"))
+		int32 AIStatus;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* JumpAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* HitAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* VertigoAnimation;
-
-
-private: 
-
-	TEnumAsByte<EAICharacterStatus> AIStatus;
-
-protected:
 //
 	virtual void Tick(float DeltaSeconds) override;
 //
 	void UpdateAnimation();
 //
-	void MoveRight(float Value);
-
+	void MoveRight();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* RunAnimation;
@@ -74,19 +63,39 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* SkillAnimation;
 
+	//void CheckDistance();
+
+
 public:
 
 	ASwordRetaliateAICharacter();
 	
 	UFUNCTION(BlueprintCallable)
-	const TEnumAsByte<EAICharacterStatus> GetAIStatus();
+		bool AIStatusHasTag(EAICharacterStatus AITag);
 
 	UFUNCTION(BlueprintCallable)
-	bool SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus);
+		bool AIStatusAddTag(EAICharacterStatus AITag);
+
+	UFUNCTION(BlueprintCallable)
+		bool AIStatusRemoveTag(EAICharacterStatus AITag);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skill)
+		class UAISkillComponent* AISkillComponent;
+
+	UFUNCTION(BlueprintCallable)
+		void PlayFlipAnimation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TMap<EAICharacterStatus, int> MaxSpeed;
 
 	/** Returns SideViewCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
+
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
 	
 };

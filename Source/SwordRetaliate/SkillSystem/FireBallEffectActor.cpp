@@ -7,9 +7,6 @@
 AFireBallEffectActor::AFireBallEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
-	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ParticleSystemComponent = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("ParticleSystemComponent"));
 }
 
 void AFireBallEffectActor::AimTarget(const FVector TargetPosition)
@@ -26,14 +23,8 @@ void AFireBallEffectActor::AimTarget(const FVector TargetPosition)
 
 void AFireBallEffectActor::OnHitTarget(FVector HitPosition)
 {
-	ParticleSystemComponent->Deactivate();
-
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this, HitPosition]
-	{
-		UGameplayStatics::SpawnEmitterAtLocation(this, EmitterTemplate, HitPosition);
-		Destroy();
-	}), 0.5, false);
+	UGameplayStatics::SpawnEmitterAtLocation(this, EmitterTemplate, HitPosition);
+	Destroy();
 }
 
 void AFireBallEffectActor::BeginPlay()

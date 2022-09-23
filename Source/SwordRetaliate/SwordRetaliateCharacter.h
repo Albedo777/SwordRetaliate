@@ -1,24 +1,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PaperAnimationComponent.h"
 #include "PaperCharacter.h"
+#include "Components/WidgetComponent.h"
 #include "SwordRetaliateCharacter.generated.h"
 
-UENUM(BlueprintType)
-enum class EFlipAnimationType : uint8
-{
-	Idle = 0,
-	Run,
-	Jump,
-	Attack,
-	Dash,
-};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterTakeDamage);
 
 class UPaperFlipbook;
 class UTextRenderComponent;
 
 UCLASS(Config = Game, Blueprintable)
-class ASwordRetaliateCharacter : public APaperCharacter
+class  ASwordRetaliateCharacter : public APaperCharacter
 {
 	GENERATED_BODY()
 
@@ -28,26 +23,57 @@ public:
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* SideViewCameraComponent;
-
-	/** Camera boom positioning the camera beside the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USkillComponent* SkillComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPaperAnimationComponent* AnimationComponent;
 	
 	virtual void Tick(float DeltaSeconds) override;
 
 	UFUNCTION(BlueprintCallable)
 	void PlayFlipAnimation(EFlipAnimationType AnimationType);
+
+	UFUNCTION(BlueprintCallable)
+	void SetIsRunning(bool bIsRunning);
+
+	UFUNCTION(BlueprintCallable)
+	void Attack();
+	
+	UFUNCTION(BlueprintCallable)
+	EFlipAnimationType GetCharacterCurrentAction() const;
+	
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterAttackAction() const;
+
+	UFUNCTION(BlueprintCallable)
+	void OnCharacterHit(float Damage);
+
+	UFUNCTION(BlueprintCallable)
+	void OnCharacterDie();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Health = 100.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaxHealth = 100.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float WalkSpeed = 500.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float RunSpeed = 1200.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraVerticalOffset = 360.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraHorizontalOffset = 200.f;
+	
+	FCharacterTakeDamage OnCharacterTakeDamage;
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	TMap<EFlipAnimationType, UPaperFlipbook*> FlipAnimationMap;
-	
-	/** Called to choose the correct animation to play based on the character's movement state */
-	void UpdateAnimation();
-	
 	/** Called for side to side input */
 	void MoveRight(float Value);
 

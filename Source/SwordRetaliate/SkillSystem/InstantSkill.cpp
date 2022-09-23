@@ -21,5 +21,5 @@ void UInstantSkill::OnDeActiveSkill(ASwordRetaliateCharacter* Character)
 
 bool UInstantSkill::CanCastSkill()
 {
-	return SkillNum > 0;
+	return Super::CanCastSkill() && SkillNum > 0;
 }

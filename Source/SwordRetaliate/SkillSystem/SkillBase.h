@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "EffectActor.h"
 #include "SwordRetaliate/SwordRetaliateCharacter.h"
+#include "SwordRetaliate/PaperAnimationComponent.h"
 #include "UObject/Object.h"
 #include "SkillBase.generated.h"
 
@@ -22,6 +23,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EFlipAnimationType AnimationType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SkillCoolDownTime;
 	
 	virtual void OnInitialize();
 	
@@ -36,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDeActiveSkill(ASwordRetaliateCharacter* Character);
+
+private:
+	bool bIsInCoolDown = false;
 	
 	FTimerHandle TimerHandleSkill;
 };

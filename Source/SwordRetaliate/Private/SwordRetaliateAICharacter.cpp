@@ -10,7 +10,14 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "AISkillComponent.h"
 
+
+void ASwordRetaliateAICharacter::PlayFlipAnimation()
+{
+
+}
 
 ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 {
@@ -72,33 +79,93 @@ ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 
 	// TODO: Here
 
-	AIStatus = EAICharacterStatus::Run;
+	//AIStatusAddTag(EAICharacterStatus::Run);
+
+	AISkillComponent = CreateDefaultSubobject<UAISkillComponent>(TEXT("AISkillComponent"));
+
+	Health = 100.0f;
+
 }
 
-bool ASwordRetaliateAICharacter::SetAIStatus(TEnumAsByte<EAICharacterStatus> NewAIStatus)
+
+bool ASwordRetaliateAICharacter::AIStatusHasTag(EAICharacterStatus AITag)
 {
+	if (AIStatus & TOFLAG(AITag))
+	{
+		return true;
+	}
 	return false;
 }
 
-const TEnumAsByte<EAICharacterStatus> ASwordRetaliateAICharacter::GetAIStatus()
+bool ASwordRetaliateAICharacter::AIStatusAddTag(EAICharacterStatus AITag)
 {
-	return AIStatus;
+	if (AIStatusHasTag(AITag))
+	{
+		return true;
+	}
+	AIStatus = AIStatus | TOFLAG(AITag);
+	return true;
+}
+
+bool ASwordRetaliateAICharacter::AIStatusRemoveTag(EAICharacterStatus AITag)
+{
+	if (!AIStatusHasTag(AITag))
+	{
+		return true;
+	}
+	AIStatus = AIStatus & (!TOFLAG(AITag));
+	return true;
 }
 
 void ASwordRetaliateAICharacter::UpdateAnimation()
 {
 	// Are we moving or skilling?
-	UPaperFlipbook* DesiredAnimation = RunAnimation;
+	//UPaperFlipbook* DesiredAnimation = RunAnimation;
 
-	// TODO: change Animation every tick
-	GetSprite()->SetFlipbook(DesiredAnimation);
+	//// TODO: change Animation every tick
+	//GetSprite()->SetFlipbook(DesiredAnimation);
 
 }
 
-void ASwordRetaliateAICharacter::MoveRight(float Value)
+void ASwordRetaliateAICharacter::MoveRight()
 {
-	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	if (AIStatusHasTag(EAICharacterStatus::Hit))
+	{
+		return;
+	}
+	float Value = 1.0f;
+	if (AIStatusHasTag(EAICharacterStatus::Dead) || AIStatusHasTag(EAICharacterStatus::StopRun))
+	{
+		Value = 0.0f;
+		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	}
+	else if (AIStatusHasTag(EAICharacterStatus::SlowRun))
+	{
+		Value = 0.4;
+		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	}
+	else if (AIStatusHasTag(EAICharacterStatus::Run))
+	{
+		Value = 0.7;
+		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
+	}
+	
 }
+
+//void ASwordRetaliateAICharacter::CheckDistance()
+//{
+//	
+//	APlayerController *PC = UGameplayStatics::GetPlayerController(this, 0);
+//	APawn *Pawn = PC->GetPawn();
+//	FVector PlayerLocation = Pawn->GetActorLocation();
+//	FVector AILocation = GetActorLocation();
+//	float Distance = PlayerLocation.X - AILocation.X;
+//	if (Distance > 100.f)
+//	{
+//		SetActorLocation(PlayerLocation - FVector(80.f, 0, 0));
+//	}
+//	return ;
+//}
 
 void ASwordRetaliateAICharacter::Tick(float DeltaSeconds)
 {
@@ -106,6 +173,8 @@ void ASwordRetaliateAICharacter::Tick(float DeltaSeconds)
 
 	UpdateAnimation();
 
-	MoveRight(1.0);
+	//MoveRight();
+
+	//CheckDistance();
 }
 
