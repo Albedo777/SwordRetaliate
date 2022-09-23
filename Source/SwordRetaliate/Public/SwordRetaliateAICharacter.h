@@ -16,7 +16,8 @@
 UENUM(BlueprintType, meta = (Bitflags))
 enum class EAICharacterStatus : uint8
 {
-	Run = 0				UMETA(DisplayName = "跑"),
+	None = 0			UMETA(DisplayName = "空"),
+	Run					UMETA(DisplayName = "跑"),
 	SlowRun				UMETA(DisplayName = "慢跑"),
 	FastRun				UMETA(DisplayName = "瞬移"),
 	StopRun				UMETA(DisplayName = "眩晕"),
@@ -25,12 +26,16 @@ enum class EAICharacterStatus : uint8
 	Dead				UMETA(DisplayName = "死亡"),
 	Skill				UMETA(DisplayName = "释放技能"),
 	Hit					UMETA(DisplayName = "撞"),
+	Plunge				UMETA(DisplayName = "猛扑"),
 };
+
 
 UCLASS()
 class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 {
 	GENERATED_BODY()
+
+protected:
 
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -41,28 +46,10 @@ class SWORDRETALIATE_API ASwordRetaliateAICharacter : public APaperCharacter
 		class USpringArmComponent* CameraBoom;
 
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* FastRunAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* SlowRunAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* JumpAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* HitAnimation;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	//	class UPaperFlipbook* VertigoAnimation;
-
-
-protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (Bitmask, BitmaskEnum = "EAICharacterStatus"))
 		int32 AIStatus;
 
-protected:
 //
 	virtual void Tick(float DeltaSeconds) override;
 //
@@ -70,13 +57,13 @@ protected:
 //
 	void MoveRight();
 
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* RunAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* SkillAnimation;
 
+	//void CheckDistance();
 
 
 public:
@@ -93,12 +80,22 @@ public:
 		bool AIStatusRemoveTag(EAICharacterStatus AITag);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skill)
-		class USkillComponent* SkillComponent;
+		class UAISkillComponent* AISkillComponent;
+
+	UFUNCTION(BlueprintCallable)
+		void PlayFlipAnimation();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		float Health;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		TMap<EAICharacterStatus, int> MaxSpeed;
 
 	/** Returns SideViewCameraComponent subobject **/
 	FORCEINLINE class UCameraComponent* GetSideViewCameraComponent() const { return SideViewCameraComponent; }
 
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
+
 	
 };
