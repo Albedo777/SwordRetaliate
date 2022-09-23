@@ -21,35 +21,29 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	// Set the size of our collision capsule.
 	GetCapsuleComponent()->SetCapsuleHalfHeight(96.0f);
 	GetCapsuleComponent()->SetCapsuleRadius(40.0f);
-
-	// Create a camera boom attached to the root (capsule)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 500.0f;
-	CameraBoom->SocketOffset = FVector(0.0f, 0.0f, 75.0f);
-	CameraBoom->SetUsingAbsoluteRotation(true);
-	CameraBoom->bDoCollisionTest = false;
-	CameraBoom->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
-
+	
 	// Create an orthographic camera (no perspective) and attach it to the boom
 	SideViewCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
 	SideViewCameraComponent->ProjectionMode = ECameraProjectionMode::Orthographic;
-	SideViewCameraComponent->OrthoWidth = 1024;
-	SideViewCameraComponent->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	SideViewCameraComponent->OrthoWidth = 1600;
+	SideViewCameraComponent->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
+	SideViewCameraComponent->SetUsingAbsoluteRotation(true);
+	SideViewCameraComponent->SetUsingAbsoluteLocation(true);
 
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
-	CameraBoom->SetUsingAbsoluteRotation(true);
+	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1000.f,  CameraHorizontalOffset));
+	SideViewCameraComponent->SetWorldRotation(FRotator(0.f, 0.f, -90.f));
 	SideViewCameraComponent->bUsePawnControlRotation = false;
 	SideViewCameraComponent->bAutoActivate = true;
 	GetCharacterMovement()->bOrientRotationToMovement = false;
 
 	// Configure character movement
-	GetCharacterMovement()->GravityScale = 2.0f;
-	GetCharacterMovement()->AirControl = 0.80f;
-	GetCharacterMovement()->JumpZVelocity = 1000.f;
+	GetCharacterMovement()->GravityScale = 6.0f;
+	GetCharacterMovement()->AirControl = 1.f;
+	GetCharacterMovement()->JumpZVelocity = 2000.f;
 	GetCharacterMovement()->GroundFriction = 3.0f;
-	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
-	GetCharacterMovement()->MaxFlySpeed = 600.0f;
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+	GetCharacterMovement()->MaxFlySpeed = RunSpeed;
 	JumpMaxCount = 2;
 
 	// Lock character motion onto the XZ plane, so the character can't move in or out of the screen
@@ -188,4 +182,8 @@ void ASwordRetaliateCharacter::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
+
+	// Update camera
+	const FVector CameraLocation = SideViewCameraComponent->GetComponentLocation();
+	SideViewCameraComponent->SetWorldLocation(FVector(GetActorLocation().X + CameraHorizontalOffset, CameraLocation.Y, CameraVerticalOffset));
 }

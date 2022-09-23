@@ -23,10 +23,6 @@ public:
 	/** Side view camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera, meta=(AllowPrivateAccess="true"))
 	class UCameraComponent* SideViewCameraComponent;
-
-	/** Camera boom positioning the camera beside the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	class USpringArmComponent* CameraBoom;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class USkillComponent* SkillComponent;
@@ -69,6 +65,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float RunSpeed = 1200.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraVerticalOffset = 360.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraHorizontalOffset = 200.f;
+	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 	
 protected:
