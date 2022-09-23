@@ -11,6 +11,13 @@
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "AISkillComponent.h"
+
+
+void ASwordRetaliateAICharacter::PlayFlipAnimation()
+{
+
+}
 
 ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 {
@@ -72,7 +79,11 @@ ASwordRetaliateAICharacter::ASwordRetaliateAICharacter()
 
 	// TODO: Here
 
-	AIStatusAddTag(EAICharacterStatus::Run);
+	//AIStatusAddTag(EAICharacterStatus::Run);
+
+	AISkillComponent = CreateDefaultSubobject<UAISkillComponent>(TEXT("AISkillComponent"));
+
+	Health = 100.0f;
 
 }
 
@@ -109,15 +120,19 @@ bool ASwordRetaliateAICharacter::AIStatusRemoveTag(EAICharacterStatus AITag)
 void ASwordRetaliateAICharacter::UpdateAnimation()
 {
 	// Are we moving or skilling?
-	UPaperFlipbook* DesiredAnimation = RunAnimation;
+	//UPaperFlipbook* DesiredAnimation = RunAnimation;
 
-	// TODO: change Animation every tick
-	GetSprite()->SetFlipbook(DesiredAnimation);
+	//// TODO: change Animation every tick
+	//GetSprite()->SetFlipbook(DesiredAnimation);
 
 }
 
 void ASwordRetaliateAICharacter::MoveRight()
 {
+	if (AIStatusHasTag(EAICharacterStatus::Hit))
+	{
+		return;
+	}
 	float Value = 1.0f;
 	if (AIStatusHasTag(EAICharacterStatus::Dead) || AIStatusHasTag(EAICharacterStatus::StopRun))
 	{
@@ -158,7 +173,7 @@ void ASwordRetaliateAICharacter::Tick(float DeltaSeconds)
 
 	UpdateAnimation();
 
-	MoveRight();
+	//MoveRight();
 
 	//CheckDistance();
 }
