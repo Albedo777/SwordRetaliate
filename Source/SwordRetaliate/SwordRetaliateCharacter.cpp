@@ -74,13 +74,14 @@ void ASwordRetaliateCharacter::PlayFlipAnimation(EFlipAnimationType AnimationTyp
 void ASwordRetaliateCharacter::SetIsRunning(bool bIsRunning)
 {
 	AnimationComponent->SetIsRunning(bIsRunning);
+	
 	if (bIsRunning)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = RunSpeed * DashRate;
 	}
 	else
 	{
-		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = WalkSpeed * DashRate;
 	}
 }
 
@@ -92,6 +93,14 @@ void ASwordRetaliateCharacter::Attack()
 	}
 }
 
+void ASwordRetaliateCharacter::Dash()
+{
+	if (!IsCharacterDash())
+	{
+		PlayFlipAnimation(EFlipAnimationType::Dash);
+	}
+}
+
 EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 {
 	return AnimationComponent->GetCharacterCurrentAction();
@@ -100,6 +109,11 @@ EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 bool ASwordRetaliateCharacter::IsCharacterAttackAction() const
 {
 	return GetCharacterCurrentAction() == EFlipAnimationType::Attack;
+}
+
+bool ASwordRetaliateCharacter::IsCharacterDash() const
+{
+	return GetCharacterCurrentAction() == EFlipAnimationType::Dash;
 }
 
 void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
@@ -130,7 +144,37 @@ void ASwordRetaliateCharacter::OnCharacterDie()
 void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	if (IsCharacterDash())
+	{
+		DashTimer += DeltaSeconds;
+		DashRate = Curve->GetFloatValue(DashTimer);
+	}
+	else
+	{
+		DashTimer = 0.f;
+		DashRate = 1.f;
+	}
 
+	// Move camera
+	float MoveOffset;
+	const float Offset = SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X ;
+	UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
+	const float MoveSpeed = FMath::Min(FMath::Abs(FMath::Abs(Offset) - CameraHorizontalOffset), CameraRecoverSpeed);
+	if (FMath::IsNearlyZero(Offset))
+	{
+		MoveOffset = 0.f;
+	}
+	else if (Offset <= CameraHorizontalOffset)
+	{
+		MoveOffset = MoveSpeed;
+	}
+	else
+	{
+		MoveOffset = -MoveSpeed;
+	}
+	SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
+	
 	UpdateCharacter();
 }
 
@@ -165,6 +209,14 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 	StopJumping();
 }
 
+void ASwordRetaliateCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	const FVector CameraLocation = SideViewCameraComponent->GetComponentLocation();
+	SideViewCameraComponent->SetWorldLocation(FVector(GetActorLocation().X + CameraHorizontalOffset, CameraLocation.Y, CameraVerticalOffset));
+}
+
 void ASwordRetaliateCharacter::UpdateCharacter()
 {
 	// Now setup the rotation of the controller based on the direction we are travelling
@@ -182,8 +234,4 @@ void ASwordRetaliateCharacter::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
-
-	// Update camera
-	const FVector CameraLocation = SideViewCameraComponent->GetComponentLocation();
-	SideViewCameraComponent->SetWorldLocation(FVector(GetActorLocation().X + CameraHorizontalOffset, CameraLocation.Y, CameraVerticalOffset));
 }
