@@ -40,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Attack();
+
+	UFUNCTION(BlueprintCallable)
+	void Dash();
 	
 	UFUNCTION(BlueprintCallable)
 	EFlipAnimationType GetCharacterCurrentAction() const;
@@ -47,6 +50,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsCharacterAttackAction() const;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterDash() const;
+	
 	UFUNCTION(BlueprintCallable)
 	void OnCharacterHit(float Damage);
 
@@ -70,10 +76,21 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CameraHorizontalOffset = 200.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DashRate = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* Curve;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float CameraRecoverSpeed = 4.f;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 	
 protected:
+	virtual void BeginPlay() override;
+	
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
@@ -88,4 +105,7 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+private:
+	float DashTimer = 0.f;
 };

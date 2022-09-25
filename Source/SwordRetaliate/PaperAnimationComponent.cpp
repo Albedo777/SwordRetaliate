@@ -33,7 +33,8 @@ void UPaperAnimationComponent::HandleAnimation()
 	const UCharacterMovementComponent* MovementComponent = PaperCharacter->GetCharacterMovement();
 	if (MovementComponent->IsWalking())
 	{
-		if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+		if (GetCharacterCurrentAction() == EFlipAnimationType::Attack ||
+			GetCharacterCurrentAction() == EFlipAnimationType::Dash )
 		{
 			PaperCharacter->GetSprite()->SetLooping(false);
 		}
@@ -101,6 +102,10 @@ void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 		PlayFlipAnimation(EFlipAnimationType::Fall);
 	}
 	if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+	{
+		PlayFlipAnimation(EFlipAnimationType::Idle);
+	}
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Dash)
 	{
 		PlayFlipAnimation(EFlipAnimationType::Idle);
 	}
