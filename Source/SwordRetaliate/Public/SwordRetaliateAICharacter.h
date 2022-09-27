@@ -77,6 +77,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 		bool AIStatusRemoveTag(EAICharacterStatus AITag);
 
+	UFUNCTION(BlueprintCallable)
+		bool AIStatusHasOnlyTag(EAICharacterStatus AITag);
+
+	UFUNCTION(BlueprintCallable)
+		bool AIStatusHasOnlyTwoTag(EAICharacterStatus AITag1, EAICharacterStatus AITag2);
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = Skill)
 		class UAISkillComponent* AISkillComponent;
 

@@ -117,6 +117,33 @@ bool ASwordRetaliateAICharacter::AIStatusRemoveTag(EAICharacterStatus AITag)
 	return true;
 }
 
+bool ASwordRetaliateAICharacter::AIStatusHasOnlyTag(EAICharacterStatus AITag)
+{
+	if (AIStatus & TOFLAG(AITag))
+	{
+		if (!(AIStatus & (~TOFLAG(AITag)))) 
+		{
+			return true;
+		}
+
+	}
+	return false;
+}
+
+
+bool ASwordRetaliateAICharacter::AIStatusHasOnlyTwoTag(EAICharacterStatus AITag1, EAICharacterStatus AITag2)
+{
+	if (AIStatus & TOFLAG(AITag1) & TOFLAG(AITag2))
+	{
+		if (!(AIStatus & (~(TOFLAG(AITag1) | TOFLAG(AITag2)))))
+		{
+			return true;
+		}
+
+	}
+	return false;
+}
+
 void ASwordRetaliateAICharacter::UpdateAnimation()
 {
 	// Are we moving or skilling?

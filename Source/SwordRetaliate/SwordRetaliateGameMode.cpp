@@ -11,21 +11,11 @@ ASwordRetaliateGameMode::ASwordRetaliateGameMode()
 void ASwordRetaliateGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UGameplayStatics::GetAllActorsWithTag(this, BackgroundTag, BackgroundSpriteActors);
+	
 }
 
 void ASwordRetaliateGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	for (AActor* BackgroundSpriteActor : BackgroundSpriteActors)
-	{
-		const FVector CurrentLocation = BackgroundSpriteActor->GetActorLocation();
-		if (CurrentLocation.X < LeftBound)
-		{
-			BackgroundSpriteActor->SetActorLocation(FVector(RightBound, CurrentLocation.Y, CurrentLocation.Z));
-		}
-		BackgroundSpriteActor->AddActorLocalOffset(FVector(LevelMoveSpeed * DeltaSeconds, 0.f, 0.f));
-	}
+	
 }
