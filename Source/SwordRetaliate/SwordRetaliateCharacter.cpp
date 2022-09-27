@@ -177,6 +177,38 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
 	
 	UpdateCharacter();
+
+	// Animation
+	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
+	{
+		if (IsCharacterDash())
+		{
+			if (FrameDataList.IsValidIndex(Index) && AfterImageSprite && (FrameDataList.Num() - 1 - Index) * DashAppearDuration <= DashTimer)
+			{
+				AfterImageSprite->SetVisibility(true);
+				AfterImageSprite->SetFlipbook(FrameDataList[Index].CachePaperFlipbook);
+				AfterImageSprite->Play();
+				AfterImageSprite->SetPlaybackPosition(FrameDataList[Index].PlaybackTime, true);
+				AfterImageSprite->SetLooping(false);
+			}
+		}
+		else
+		{
+			AfterImageSprite->SetVisibility(false, false);
+		}
+	};
+	
+	// Set 1 frame
+	SetAfterImageSprite(1, AfterImage1Sprite);
+	// Set 2 frame
+	SetAfterImageSprite(0, AfterImage2Sprite);
+	// Current frame
+	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
+	// The frame which needs to be drop
+	if (FrameDataList.Num() > 2)
+	{
+		FrameDataList.RemoveAt(0);
+	}
 }
 
 void ASwordRetaliateCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -208,41 +240,6 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 {
 	// Cease jumping once touch stopped
 	StopJumping();
-}
-
-void ASwordRetaliateCharacter::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
-{
-	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
-	
-	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
-	{
-		if (IsCharacterDash())
-		{
-			if (FrameDataList.IsValidIndex(Index) && AfterImageSprite)
-			{
-				AfterImageSprite->SetVisibility(true);
-				AfterImageSprite->SetFlipbook(FrameDataList[Index].CachePaperFlipbook);
-				AfterImageSprite->Play();
-				AfterImageSprite->SetPlaybackPosition(FrameDataList[Index].PlaybackTime, true);
-				AfterImageSprite->SetLooping(false);
-			}
-		}
-		else
-		{
-			AfterImageSprite->SetVisibility(false, false);
-		}
-	};
-	// Set 1 frame
-	SetAfterImageSprite(1, AfterImage1Sprite);
-	// Set 2 frame
-	SetAfterImageSprite(0, AfterImage2Sprite);
-	// Current frame
-	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
-	// The frame which needs to be drop
-	if (FrameDataList.Num() > 2)
-	{
-		FrameDataList.RemoveAt(0);
-	}
 }
 
 void ASwordRetaliateCharacter::BP_OnAttack_Implementation()

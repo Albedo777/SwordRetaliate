@@ -105,14 +105,15 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CameraRecoverSpeed = 4.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DashAppearDuration = 0.5f;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 
 	UPROPERTY(Transient)
 	TArray<FSpriteFrameData> FrameDataList;
-
-	virtual void TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
-
+	
 	UPROPERTY(Transient)
 	UPaperFlipbookComponent* AfterImage1Sprite;
 
