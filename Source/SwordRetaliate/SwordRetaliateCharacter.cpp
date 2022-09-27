@@ -110,7 +110,11 @@ EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 
 bool ASwordRetaliateCharacter::IsCharacterAttackAction() const
 {
-	return GetCharacterCurrentAction() == EFlipAnimationType::Attack;
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+	{
+		return GetSprite()->GetPlaybackPosition() / GetSprite()->GetFlipbookLength() <= AttackEffectRate;
+	}
+	return false;
 }
 
 bool ASwordRetaliateCharacter::IsCharacterDash() const

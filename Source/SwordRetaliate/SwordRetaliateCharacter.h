@@ -108,6 +108,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DashAppearDuration = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AttackEffectRate = 0.6f;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 
