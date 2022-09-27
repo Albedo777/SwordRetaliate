@@ -29,7 +29,8 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	SideViewCameraComponent->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
 	SideViewCameraComponent->SetUsingAbsoluteRotation(true);
 	SideViewCameraComponent->SetUsingAbsoluteLocation(true);
-
+	SideViewCameraComponent->SetAspectRatio(2400.f / 1080.f);
+	
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
 	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1000.f,  CameraHorizontalOffset));
 	SideViewCameraComponent->SetWorldRotation(FRotator(0.f, 0.f, -90.f));
@@ -160,7 +161,7 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	// Move camera
 	float MoveOffset;
 	const float Offset = SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X ;
-	UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
+	// UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
 	const float MoveSpeed = FMath::Min(FMath::Abs(FMath::Abs(Offset) - CameraHorizontalOffset), CameraRecoverSpeed);
 	if (FMath::IsNearlyZero(Offset))
 	{
