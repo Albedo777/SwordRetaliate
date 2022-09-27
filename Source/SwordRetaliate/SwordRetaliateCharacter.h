@@ -118,6 +118,9 @@ public:
 
 	UPROPERTY(Transient)
 	UPaperFlipbookComponent* AfterImage2Sprite;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void BP_OnAttack();
 	
 protected:
 	virtual void BeginPlay() override;

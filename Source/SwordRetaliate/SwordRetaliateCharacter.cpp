@@ -90,6 +90,7 @@ void ASwordRetaliateCharacter::Attack()
 	if (!IsCharacterAttackAction())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Attack);
+		BP_OnAttack();
 	}
 }
 
@@ -212,11 +213,7 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 void ASwordRetaliateCharacter::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
 {
 	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
-
-	// Current frame
-	UPaperFlipbook* CurrentFlipbook = GetSprite()->GetFlipbook();
-	FSpriteFrameData CurrentData(CurrentFlipbook, GetSprite()->GetPlaybackPosition());
-
+	
 	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
 	{
 		if (IsCharacterDash())
@@ -239,13 +236,18 @@ void ASwordRetaliateCharacter::TickActor(float DeltaTime, ELevelTick TickType, F
 	SetAfterImageSprite(1, AfterImage1Sprite);
 	// Set 2 frame
 	SetAfterImageSprite(0, AfterImage2Sprite);
+	// Current frame
+	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
 	// The frame which needs to be drop
-	FrameDataList.Add(CurrentData);
 	if (FrameDataList.Num() > 2)
 	{
-		FSpriteFrameData DropData = FrameDataList[0];
 		FrameDataList.RemoveAt(0);
 	}
+}
+
+void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
+{
+	
 }
 
 void ASwordRetaliateCharacter::BeginPlay()
