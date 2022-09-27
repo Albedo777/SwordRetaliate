@@ -90,6 +90,7 @@ void ASwordRetaliateCharacter::Attack()
 	if (!IsCharacterAttackAction())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Attack);
+		BP_OnAttack();
 	}
 }
 
@@ -209,12 +210,64 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 	StopJumping();
 }
 
+void ASwordRetaliateCharacter::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
+{
+	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
+	
+	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
+	{
+		if (IsCharacterDash())
+		{
+			if (FrameDataList.IsValidIndex(Index) && AfterImageSprite)
+			{
+				AfterImageSprite->SetVisibility(true);
+				AfterImageSprite->SetFlipbook(FrameDataList[Index].CachePaperFlipbook);
+				AfterImageSprite->Play();
+				AfterImageSprite->SetPlaybackPosition(FrameDataList[Index].PlaybackTime, true);
+				AfterImageSprite->SetLooping(false);
+			}
+		}
+		else
+		{
+			AfterImageSprite->SetVisibility(false, false);
+		}
+	};
+	// Set 1 frame
+	SetAfterImageSprite(1, AfterImage1Sprite);
+	// Set 2 frame
+	SetAfterImageSprite(0, AfterImage2Sprite);
+	// Current frame
+	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
+	// The frame which needs to be drop
+	if (FrameDataList.Num() > 2)
+	{
+		FrameDataList.RemoveAt(0);
+	}
+}
+
+void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
+{
+	
+}
+
 void ASwordRetaliateCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
 	const FVector CameraLocation = SideViewCameraComponent->GetComponentLocation();
 	SideViewCameraComponent->SetWorldLocation(FVector(GetActorLocation().X + CameraHorizontalOffset, CameraLocation.Y, CameraVerticalOffset));
+
+	for (UActorComponent* Component : GetComponents())
+	{
+		if (Component->GetName().Contains("AfterImage1"))
+		{
+			AfterImage1Sprite = Cast<UPaperFlipbookComponent>(Component);
+		}
+		else if (Component->GetName().Contains("AfterImage2"))
+		{
+			AfterImage2Sprite = Cast<UPaperFlipbookComponent>(Component);
+		}
+	}
 }
 
 void ASwordRetaliateCharacter::UpdateCharacter()
