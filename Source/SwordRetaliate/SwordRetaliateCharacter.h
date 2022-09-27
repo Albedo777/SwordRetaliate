@@ -12,6 +12,26 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FCharacterTakeDamage);
 class UPaperFlipbook;
 class UTextRenderComponent;
 
+USTRUCT(BlueprintType)
+struct FSpriteFrameData
+{
+	FSpriteFrameData() = default;
+	
+	FSpriteFrameData(UPaperFlipbook* CachePaperFlipbook, float PlaybackTime)
+		: CachePaperFlipbook(CachePaperFlipbook), PlaybackTime(PlaybackTime)
+	{
+		
+	}
+
+	GENERATED_BODY()
+
+	UPROPERTY(Transient)
+	UPaperFlipbook* CachePaperFlipbook = nullptr;
+
+	UPROPERTY(Transient)
+	float PlaybackTime = 0.f;
+};
+
 UCLASS(Config = Game, Blueprintable)
 class  ASwordRetaliateCharacter : public APaperCharacter
 {
@@ -87,6 +107,17 @@ public:
 	float CameraRecoverSpeed = 4.f;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
+
+	UPROPERTY(Transient)
+	TArray<FSpriteFrameData> FrameDataList;
+
+	virtual void TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction) override;
+
+	UPROPERTY(Transient)
+	UPaperFlipbookComponent* AfterImage1Sprite;
+
+	UPROPERTY(Transient)
+	UPaperFlipbookComponent* AfterImage2Sprite;
 	
 protected:
 	virtual void BeginPlay() override;
