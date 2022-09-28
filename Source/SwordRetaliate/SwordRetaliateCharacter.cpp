@@ -88,7 +88,7 @@ void ASwordRetaliateCharacter::SetIsRunning(bool bIsRunning)
 
 void ASwordRetaliateCharacter::Attack()
 {
-	if (!IsCharacterAttackAction())
+	if (!IsCharacterAttackAction() && !IsCharacterDash())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Attack);
 		BP_OnAttack();
@@ -100,6 +100,7 @@ void ASwordRetaliateCharacter::Dash()
 	if (!IsCharacterDash())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Dash);
+		BP_OnDash();
 	}
 }
 
@@ -248,6 +249,11 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 }
 
 void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
+{
+	
+}
+
+void ASwordRetaliateCharacter::BP_OnDash_Implementation()
 {
 	
 }
