@@ -92,22 +92,33 @@ EFlipAnimationType UPaperAnimationComponent::GetCharacterCurrentAction() const
 
 void UPaperAnimationComponent::OnJumpApexReached()
 {
-	PlayFlipAnimation(EFlipAnimationType::AirTrans);
+	if (PaperCharacter->JumpCurrentCount <= 1)
+	{
+		PlayFlipAnimation(EFlipAnimationType::AirTrans);
+	}
 }
 
 void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 {
-	if (GetCharacterCurrentAction() == EFlipAnimationType::AirTrans)
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Jump2)
+	{
+		PlayFlipAnimation(EFlipAnimationType::AirTrans2);
+	}
+	else if (GetCharacterCurrentAction() == EFlipAnimationType::AirTrans)
 	{
 		PlayFlipAnimation(EFlipAnimationType::Fall);
 	}
-	if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+	else if (GetCharacterCurrentAction() == EFlipAnimationType::AirTrans2)
 	{
-		PlayFlipAnimation(EFlipAnimationType::Idle);
+		PlayFlipAnimation(EFlipAnimationType::Fall2);
 	}
-	if (GetCharacterCurrentAction() == EFlipAnimationType::Dash)
+	else if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
 	{
-		PlayFlipAnimation(EFlipAnimationType::Idle);
+		PlayFlipAnimation(EFlipAnimationType::Run);
+	}
+	else if (GetCharacterCurrentAction() == EFlipAnimationType::Dash)
+	{
+		PlayFlipAnimation(EFlipAnimationType::Run);
 	}
 }
 
