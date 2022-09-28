@@ -32,7 +32,7 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	SideViewCameraComponent->SetAspectRatio(2400.f / 1080.f);
 	
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
-	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1000.f,  CameraHorizontalOffset));
+	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1200.f,  CameraHorizontalOffset));
 	SideViewCameraComponent->SetWorldRotation(FRotator(0.f, 0.f, -90.f));
 	SideViewCameraComponent->bUsePawnControlRotation = false;
 	SideViewCameraComponent->bAutoActivate = true;
