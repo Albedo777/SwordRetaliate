@@ -125,6 +125,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnAttack();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void BP_OnDash();
 	
 protected:
 	virtual void BeginPlay() override;
