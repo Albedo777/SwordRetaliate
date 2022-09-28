@@ -29,9 +29,10 @@ ASwordRetaliateCharacter::ASwordRetaliateCharacter()
 	SideViewCameraComponent->SetupAttachment(RootComponent, USpringArmComponent::SocketName);
 	SideViewCameraComponent->SetUsingAbsoluteRotation(true);
 	SideViewCameraComponent->SetUsingAbsoluteLocation(true);
-
+	SideViewCameraComponent->SetAspectRatio(2400.f / 1080.f);
+	
 	// Prevent all automatic rotation behavior on the camera, character, and camera component
-	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1000.f,  CameraHorizontalOffset));
+	SideViewCameraComponent->SetWorldLocation(FVector(0.f, 1200.f,  CameraHorizontalOffset));
 	SideViewCameraComponent->SetWorldRotation(FRotator(0.f, 0.f, -90.f));
 	SideViewCameraComponent->bUsePawnControlRotation = false;
 	SideViewCameraComponent->bAutoActivate = true;
@@ -109,7 +110,11 @@ EFlipAnimationType ASwordRetaliateCharacter::GetCharacterCurrentAction() const
 
 bool ASwordRetaliateCharacter::IsCharacterAttackAction() const
 {
-	return GetCharacterCurrentAction() == EFlipAnimationType::Attack;
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
+	{
+		return GetSprite()->GetPlaybackPosition() / GetSprite()->GetFlipbookLength() <= AttackEffectRate;
+	}
+	return false;
 }
 
 bool ASwordRetaliateCharacter::IsCharacterDash() const
@@ -160,7 +165,7 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	// Move camera
 	float MoveOffset;
 	const float Offset = SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X ;
-	UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
+	// UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
 	const float MoveSpeed = FMath::Min(FMath::Abs(FMath::Abs(Offset) - CameraHorizontalOffset), CameraRecoverSpeed);
 	if (FMath::IsNearlyZero(Offset))
 	{
@@ -177,6 +182,38 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
 	
 	UpdateCharacter();
+
+	// Animation
+	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
+	{
+		if (IsCharacterDash())
+		{
+			if (FrameDataList.IsValidIndex(Index) && AfterImageSprite && (FrameDataList.Num() - 1 - Index) * DashAppearDuration <= DashTimer)
+			{
+				AfterImageSprite->SetVisibility(true);
+				AfterImageSprite->SetFlipbook(FrameDataList[Index].CachePaperFlipbook);
+				AfterImageSprite->Play();
+				AfterImageSprite->SetPlaybackPosition(FrameDataList[Index].PlaybackTime, true);
+				AfterImageSprite->SetLooping(false);
+			}
+		}
+		else
+		{
+			AfterImageSprite->SetVisibility(false, false);
+		}
+	};
+	
+	// Set 1 frame
+	SetAfterImageSprite(1, AfterImage1Sprite);
+	// Set 2 frame
+	SetAfterImageSprite(0, AfterImage2Sprite);
+	// Current frame
+	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
+	// The frame which needs to be drop
+	if (FrameDataList.Num() > 2)
+	{
+		FrameDataList.RemoveAt(0);
+	}
 }
 
 void ASwordRetaliateCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -208,41 +245,6 @@ void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex,
 {
 	// Cease jumping once touch stopped
 	StopJumping();
-}
-
-void ASwordRetaliateCharacter::TickActor(float DeltaTime, ELevelTick TickType, FActorTickFunction& ThisTickFunction)
-{
-	Super::TickActor(DeltaTime, TickType, ThisTickFunction);
-	
-	auto SetAfterImageSprite = [this](int Index, UPaperFlipbookComponent* AfterImageSprite)
-	{
-		if (IsCharacterDash())
-		{
-			if (FrameDataList.IsValidIndex(Index) && AfterImageSprite)
-			{
-				AfterImageSprite->SetVisibility(true);
-				AfterImageSprite->SetFlipbook(FrameDataList[Index].CachePaperFlipbook);
-				AfterImageSprite->Play();
-				AfterImageSprite->SetPlaybackPosition(FrameDataList[Index].PlaybackTime, true);
-				AfterImageSprite->SetLooping(false);
-			}
-		}
-		else
-		{
-			AfterImageSprite->SetVisibility(false, false);
-		}
-	};
-	// Set 1 frame
-	SetAfterImageSprite(1, AfterImage1Sprite);
-	// Set 2 frame
-	SetAfterImageSprite(0, AfterImage2Sprite);
-	// Current frame
-	FrameDataList.Add(FSpriteFrameData(GetSprite()->GetFlipbook(), GetSprite()->GetPlaybackPosition()));
-	// The frame which needs to be drop
-	if (FrameDataList.Num() > 2)
-	{
-		FrameDataList.RemoveAt(0);
-	}
 }
 
 void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
