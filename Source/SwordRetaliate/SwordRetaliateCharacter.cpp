@@ -8,7 +8,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Camera/CameraComponent.h"
-#include "TimerManager.h"
 #include "SkillSystem/SkillComponent.h"
 
 ASwordRetaliateCharacter::ASwordRetaliateCharacter()
@@ -123,6 +122,11 @@ bool ASwordRetaliateCharacter::IsCharacterDash() const
 	return GetCharacterCurrentAction() == EFlipAnimationType::Dash;
 }
 
+bool ASwordRetaliateCharacter::IsCharacterWait() const
+{
+	return GetCharacterCurrentAction() == EFlipAnimationType::Wait;
+}
+
 void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
 {
 	PlayFlipAnimation(EFlipAnimationType::Hit);
@@ -182,8 +186,11 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	{
 		MoveOffset = -MoveSpeed;
 	}
-	SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
-	
+	if (FMath::IsNearlyZero(MoveOffset) || !IsCharacterWait())
+	{
+		SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
+	}
+
 	UpdateCharacter();
 
 	// Animation
@@ -269,12 +276,6 @@ void ASwordRetaliateCharacter::BP_OnDash_Implementation()
 void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 {
 	
-}
-
-void ASwordRetaliateCharacter::BP_OnReachEndPoint()
-{
-	AnimationComponent->StopAnimationTick();
-	PlayFlipAnimation(EFlipAnimationType::Idle);
 }
 
 void ASwordRetaliateCharacter::BeginPlay()
