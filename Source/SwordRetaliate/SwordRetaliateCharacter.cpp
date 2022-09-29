@@ -87,7 +87,7 @@ void ASwordRetaliateCharacter::SetIsRunning(bool bIsRunning)
 
 void ASwordRetaliateCharacter::Attack()
 {
-	if (!IsCharacterAttackAction() && !IsCharacterDash())
+	if (!IsCharacterAttackAction() && !IsCharacterDash() && !IsCharacterStopOrWait())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Attack);
 		BP_OnAttack();
@@ -96,7 +96,7 @@ void ASwordRetaliateCharacter::Attack()
 
 void ASwordRetaliateCharacter::Dash()
 {
-	if (!IsCharacterDash())
+	if (!IsCharacterDash() && !IsCharacterStopOrWait())
 	{
 		PlayFlipAnimation(EFlipAnimationType::Dash);
 		BP_OnDash();
@@ -125,6 +125,12 @@ bool ASwordRetaliateCharacter::IsCharacterDash() const
 bool ASwordRetaliateCharacter::IsCharacterWait() const
 {
 	return GetCharacterCurrentAction() == EFlipAnimationType::Wait;
+}
+
+bool ASwordRetaliateCharacter::IsCharacterStopOrWait() const
+{
+	const EFlipAnimationType CurType = GetCharacterCurrentAction();
+	return CurType == EFlipAnimationType::Stop || CurType == EFlipAnimationType::Wait;
 }
 
 void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
@@ -261,6 +267,14 @@ void ASwordRetaliateCharacter::BP_OnDash_Implementation()
 void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 {
 	
+}
+
+void ASwordRetaliateCharacter::Jump()
+{
+	if (!IsCharacterWait())
+	{
+		Super::Jump();
+	}
 }
 
 void ASwordRetaliateCharacter::BeginPlay()
