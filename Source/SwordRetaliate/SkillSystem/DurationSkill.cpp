@@ -1,6 +1,7 @@
 ﻿#include "DurationSkill.h"
 
 #include "SwordRetaliate/SwordRetaliateCharacter.h"
+#include "SwordRetaliate/SwordRetaliateUtils.h"
 
 void UDurationSkill::OnInitialize()
 {
@@ -23,10 +24,7 @@ void UDurationSkill::OnActiveSkill(ASwordRetaliateCharacter* Character)
 
 	bIsCasting = true;
 	GetWorld()->GetTimerManager().ClearTimer(TimerHandleDurationSkill);
-	GetWorld()->GetTimerManager().SetTimer(TimerHandleDurationSkill, FTimerDelegate::CreateLambda([this, Character]
-	{
-		OnDeActiveSkill(Character);
-	}), SkillDuration, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandleDurationSkill, this, &UDurationSkill::DeActiveSkill, SkillDuration, false);
 }
 
 void UDurationSkill::OnDeActiveSkill(ASwordRetaliateCharacter* Character)
@@ -42,5 +40,13 @@ void UDurationSkill::OnDeActiveSkill(ASwordRetaliateCharacter* Character)
 bool UDurationSkill::CanCastSkill()
 {
 	return Super::CanCastSkill();
+}
+
+void UDurationSkill::DeActiveSkill()
+{
+	if (ASwordRetaliateCharacter* Character = USwordRetaliateUtils::GetSwordRetaliateCharacter(this))
+	{
+		OnDeActiveSkill(Character);
+	}
 }
 

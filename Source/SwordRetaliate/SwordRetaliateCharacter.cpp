@@ -212,6 +212,12 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	{
 		FrameDataList.RemoveAt(0);
 	}
+
+	if (GetActorLocation().Z <= KillZ)
+	{
+		Health = 0.f;
+		OnCharacterDie();
+	}
 }
 
 void ASwordRetaliateCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -258,6 +264,12 @@ void ASwordRetaliateCharacter::BP_OnDash_Implementation()
 void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 {
 	
+}
+
+void ASwordRetaliateCharacter::BP_OnReachEndPoint()
+{
+	AnimationComponent->StopAnimationTick();
+	PlayFlipAnimation(EFlipAnimationType::Idle);
 }
 
 void ASwordRetaliateCharacter::BeginPlay()
