@@ -75,6 +75,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCharacterWait() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterStopOrWait() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void OnCharacterHit(float Damage);
@@ -140,7 +143,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDie();
-
+	
+	virtual void Jump() override;
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -148,13 +153,7 @@ protected:
 	void MoveRight(float Value);
 
 	void UpdateCharacter();
-
-	/** Handle touch inputs. */
-	void TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location);
-
-	/** Handle touch stop event. */
-	void TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location);
-
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End of APawn interface
