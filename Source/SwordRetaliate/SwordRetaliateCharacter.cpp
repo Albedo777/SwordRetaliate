@@ -238,9 +238,6 @@ void ASwordRetaliateCharacter::SetupPlayerInputComponent(class UInputComponent* 
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 	PlayerInputComponent->BindAxis("MoveRight", this, &ASwordRetaliateCharacter::MoveRight);
-
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &ASwordRetaliateCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &ASwordRetaliateCharacter::TouchStopped);
 }
 
 void ASwordRetaliateCharacter::MoveRight(float Value)
@@ -249,18 +246,6 @@ void ASwordRetaliateCharacter::MoveRight(float Value)
 
 	// Apply the input to the character motion
 	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), Value);
-}
-
-void ASwordRetaliateCharacter::TouchStarted(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	// Jump on any touch
-	Jump();
-}
-
-void ASwordRetaliateCharacter::TouchStopped(const ETouchIndex::Type FingerIndex, const FVector Location)
-{
-	// Cease jumping once touch stopped
-	StopJumping();
 }
 
 void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
