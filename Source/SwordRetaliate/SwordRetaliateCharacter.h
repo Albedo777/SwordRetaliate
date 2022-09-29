@@ -114,6 +114,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float KillZ = -180.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDead = false;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 
