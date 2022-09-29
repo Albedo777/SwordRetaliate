@@ -128,6 +128,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDash();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void BP_OnDie();
 	
 protected:
 	virtual void BeginPlay() override;

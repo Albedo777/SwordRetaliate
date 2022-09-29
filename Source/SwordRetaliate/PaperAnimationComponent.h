@@ -51,6 +51,8 @@ public:
 
 	UFUNCTION()
 	void OnFlipbookPlaybackCompleted();
+
+	void StopAnimationTick();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -66,4 +68,6 @@ private:
 	class APaperCharacter* PaperCharacter;
 
 	bool bIsRunning = false;
+
+	bool bTickRunAnimation = true;
 };
