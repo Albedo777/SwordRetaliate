@@ -106,6 +106,10 @@ void UPaperAnimationComponent::OnJumpApexReached()
 
 void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 {
+	if (GetCharacterCurrentAction() == EFlipAnimationType::Stop)
+	{
+		PlayFlipAnimation(EFlipAnimationType::Wait);
+	}
 	if (GetCharacterCurrentAction() == EFlipAnimationType::Jump2)
 	{
 		PlayFlipAnimation(EFlipAnimationType::AirTrans2);
