@@ -75,6 +75,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCharacterWait() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterStopOrWait() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void OnCharacterHit(float Damage);
@@ -140,7 +143,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDie();
-
+	
+	virtual void Jump() override;
+	
 protected:
 	virtual void BeginPlay() override;
 	
