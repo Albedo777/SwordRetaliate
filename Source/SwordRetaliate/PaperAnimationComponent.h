@@ -21,6 +21,8 @@ enum class EFlipAnimationType : uint8
 	Dash,
 	Hit,
 	Die,
+	Stop,
+	Wait,
 };
 
 
@@ -52,6 +54,7 @@ public:
 	UFUNCTION()
 	void OnFlipbookPlaybackCompleted();
 
+	UFUNCTION(BlueprintCallable)
 	void StopAnimationTick();
 	
 protected:

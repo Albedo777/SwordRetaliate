@@ -72,6 +72,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCharacterDash() const;
+
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterWait() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void OnCharacterHit(float Damage);
@@ -138,9 +141,6 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDie();
 
-	UFUNCTION(BlueprintCallable)
-	void BP_OnReachEndPoint();
-	
 protected:
 	virtual void BeginPlay() override;
 	
