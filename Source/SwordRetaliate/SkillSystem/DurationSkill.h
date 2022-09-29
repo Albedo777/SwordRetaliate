@@ -20,6 +20,9 @@ public:
 	virtual void OnDeActiveSkill(ASwordRetaliateCharacter* Character) override;
 
 	virtual bool CanCastSkill() override;
+
+	UFUNCTION()
+	void DeActiveSkill();
 	
 	bool bIsCasting = false;
 

@@ -111,6 +111,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AttackEffectRate = 0.6f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float KillZ = -180.f;
 	
 	FCharacterTakeDamage OnCharacterTakeDamage;
 
@@ -131,6 +134,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent)
 	void BP_OnDie();
+
+	UFUNCTION(BlueprintCallable)
+	void BP_OnReachEndPoint();
 	
 protected:
 	virtual void BeginPlay() override;
