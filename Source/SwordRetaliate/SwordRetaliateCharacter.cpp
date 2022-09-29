@@ -135,17 +135,14 @@ void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
 	
 	if (Health <= 0.f)
 	{
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, FTimerDelegate::CreateLambda([this]()
-		{
-			OnCharacterDie();
-		}), 0.5f, false);
+		OnCharacterDie();
 	}
 }
 
 void ASwordRetaliateCharacter::OnCharacterDie()
 {
-	
+	AnimationComponent->StopAnimationTick();
+	BP_OnDie();
 }
 
 void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
@@ -254,6 +251,11 @@ void ASwordRetaliateCharacter::BP_OnAttack_Implementation()
 }
 
 void ASwordRetaliateCharacter::BP_OnDash_Implementation()
+{
+	
+}
+
+void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 {
 	
 }
