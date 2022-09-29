@@ -16,16 +16,17 @@ void UDurationSkill::OnActiveSkill(ASwordRetaliateCharacter* Character)
 {
 	Super::OnActiveSkill(Character);
 
+	if (!bIsCasting)
+	{
+		EffectActor->BP_OnActiveEffect(Character);
+	}
+
 	bIsCasting = true;
-
-	OnDeActiveSkill(Character);
-
+	GetWorld()->GetTimerManager().ClearTimer(TimerHandleDurationSkill);
 	GetWorld()->GetTimerManager().SetTimer(TimerHandleDurationSkill, FTimerDelegate::CreateLambda([this, Character]
 	{
 		OnDeActiveSkill(Character);
 	}), SkillDuration, false);
-	
-	EffectActor->BP_OnActiveEffect(Character);
 }
 
 void UDurationSkill::OnDeActiveSkill(ASwordRetaliateCharacter* Character)
