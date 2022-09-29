@@ -30,6 +30,12 @@ void UPaperAnimationComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void UPaperAnimationComponent::HandleAnimation()
 {
+	if (!bTickRunAnimation)
+	{
+		PaperCharacter->GetSprite()->SetLooping(false);
+		return;
+	}
+	
 	const UCharacterMovementComponent* MovementComponent = PaperCharacter->GetCharacterMovement();
 	if (MovementComponent->IsWalking())
 	{
@@ -120,5 +126,10 @@ void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 	{
 		PlayFlipAnimation(EFlipAnimationType::Run);
 	}
+}
+
+void UPaperAnimationComponent::StopAnimationTick()
+{
+	bTickRunAnimation = false;
 }
 
