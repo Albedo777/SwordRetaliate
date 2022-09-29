@@ -141,6 +141,11 @@ void ASwordRetaliateCharacter::OnCharacterHit(float Damage)
 
 void ASwordRetaliateCharacter::OnCharacterDie()
 {
+	if (bIsDead)
+	{
+		return;
+	}
+	bIsDead = true;
 	AnimationComponent->StopAnimationTick();
 	BP_OnDie();
 }
