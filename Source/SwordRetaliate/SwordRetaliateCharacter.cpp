@@ -179,7 +179,8 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	float MoveOffset;
 	const float Offset = SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X ;
 	// UE_LOG(LogTemp, Log, TEXT("Offset %f"), SideViewCameraComponent->GetComponentLocation().X - GetActorLocation().X)
-	const float MoveSpeed = FMath::Min(FMath::Abs(FMath::Abs(Offset) - CameraHorizontalOffset), CameraRecoverSpeed);
+	float DiffDistance = FMath::Abs(FMath::Abs(Offset) - CameraHorizontalOffset);
+	const float MoveSpeed = FMath::Min(DiffDistance, CameraRecoverSpeed);
 	if (FMath::IsNearlyZero(Offset))
 	{
 		MoveOffset = 0.f;
@@ -192,7 +193,21 @@ void ASwordRetaliateCharacter::Tick(float DeltaSeconds)
 	{
 		MoveOffset = -MoveSpeed;
 	}
-	if (FMath::IsNearlyZero(MoveOffset) || !IsCharacterWait())
+	if (IsCharacterWait())
+	{
+		if (DiffDistance >= 10.f)
+		{
+			if (MoveOffset <= 0.f)
+			{
+				SideViewCameraComponent->AddWorldOffset(FVector(-RunSpeed * DeltaSeconds - MoveOffset, 0.f, 0.f));
+			}
+			else
+			{
+				SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
+			}
+		}
+	}
+	else
 	{
 		SideViewCameraComponent->AddWorldOffset(FVector(RunSpeed * DeltaSeconds + MoveOffset, 0.f, 0.f));
 	}
@@ -271,7 +286,7 @@ void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 
 void ASwordRetaliateCharacter::Jump()
 {
-	if (!IsCharacterWait())
+	if (!IsCharacterWait() && !IsCharacterDash())
 	{
 		Super::Jump();
 	}

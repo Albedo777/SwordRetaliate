@@ -124,7 +124,21 @@ void UPaperAnimationComponent::OnFlipbookPlaybackCompleted()
 	}
 	else if (GetCharacterCurrentAction() == EFlipAnimationType::Attack)
 	{
-		PlayFlipAnimation(EFlipAnimationType::Run);
+		if (PaperCharacter->GetCharacterMovement()->IsWalking())
+		{
+			PlayFlipAnimation(EFlipAnimationType::Run);
+		}
+		else
+		{
+			if (PaperCharacter->JumpCurrentCount <= 1)
+			{
+				PlayFlipAnimation(EFlipAnimationType::Fall);
+			}
+			else
+			{
+				PlayFlipAnimation(EFlipAnimationType::Fall2);
+			}
+		}
 	}
 	else if (GetCharacterCurrentAction() == EFlipAnimationType::Dash)
 	{
