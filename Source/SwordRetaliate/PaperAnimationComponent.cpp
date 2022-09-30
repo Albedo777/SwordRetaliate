@@ -32,7 +32,14 @@ void UPaperAnimationComponent::HandleAnimation()
 {
 	if (!bTickRunAnimation)
 	{
-		PaperCharacter->GetSprite()->SetLooping(false);
+		if (GetCharacterCurrentAction() == EFlipAnimationType::Wait)
+		{
+			PaperCharacter->GetSprite()->SetLooping(true);
+		}
+		else
+		{
+			PaperCharacter->GetSprite()->SetLooping(false);
+		}
 		return;
 	}
 	
