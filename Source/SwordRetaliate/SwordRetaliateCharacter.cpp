@@ -271,7 +271,7 @@ void ASwordRetaliateCharacter::BP_OnDie_Implementation()
 
 void ASwordRetaliateCharacter::Jump()
 {
-	if (!IsCharacterWait())
+	if (!IsCharacterWait() && !IsCharacterDash())
 	{
 		Super::Jump();
 	}
